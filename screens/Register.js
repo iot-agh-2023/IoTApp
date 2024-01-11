@@ -4,6 +4,7 @@ import { StyleSheet, Text, View, TextInput } from 'react-native';
 import axios from 'axios';
 
 import { PrimaryButton } from '../components/PrimaryButton.js';
+import { globalStyles } from '../utils.js';
 
 import { SERVER_PATH } from '../config.js';
 
@@ -14,9 +15,9 @@ export default function Register({ navigation}) {
 
   return (
       <View style={styles.container}>
-          <Text style={styles.h2}>Create an account</Text>
+          <Text style={globalStyles.h1}>Create an account</Text>
           <TextInput 
-              style={styles.input}
+              style={globalStyles.input}
               placeholder='Email'
               inputMode='email'
               textContentType='emailAddress'
@@ -24,13 +25,13 @@ export default function Register({ navigation}) {
               defaultValue={email}
           />
           <TextInput 
-              style={styles.input}
+              style={globalStyles.input}
               placeholder='Username'
               onChangeText={text => setUsername(text)}
               defaultValue={username}
           />
           <TextInput 
-              style={styles.input}
+              style={globalStyles.input}
               placeholder='Password'
               textContentType='password'
               secureTextEntry={true}
@@ -98,19 +99,5 @@ const styles = StyleSheet.create({
       backgroundColor: '#fff',
       alignItems: 'center',
       justifyContent: 'center',
-    },
-    h2: {
-      fontSize: 24,
-      fontWeight: 'bold',
-      marginBottom: 20,
-    },
-    input: {
-        width: '60%',
-        height: 40,
-        borderWidth: 1,
-        borderColor: 'black',
-        marginBottom: 10,
-        padding: 10,
-        borderRadius: 10,
     },
   });

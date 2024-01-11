@@ -1,10 +1,14 @@
 import { Text, Pressable, StyleSheet } from 'react-native';
 
 
-export function PrimaryButton({ text, onPress }) {
+export function PrimaryButton({ text, onPress, mode = 'dark' }) {
     return (
+        mode === 'dark' ?
         <Pressable  style={styles.btn} onPress={onPress}>
             <Text style={styles.btnTitle} >{text}</Text>
+        </Pressable> :
+        <Pressable  style={styles.btnLight} onPress={onPress}>
+            <Text style={styles.btnTitleLight} >{text}</Text>
         </Pressable>
     );
 }
@@ -15,7 +19,6 @@ const styles = StyleSheet.create({
         height: 40,
         alignItems: 'center',
         justifyContent: 'center',
-        marginBottom: 10,
         borderRadius: 10,
         backgroundColor: '#14213D',
     },
@@ -23,4 +26,16 @@ const styles = StyleSheet.create({
         color: '#FFFFFF',
         fontSize: 16,
     },
+    btnLight: {
+        width: 100,
+        height: 40,
+        alignItems: 'center',
+        justifyContent: 'center',
+        borderRadius: 10,
+        backgroundColor: '#FFFFFF',
+    },
+    btnTitleLight: {
+        color: '#14213D',
+        fontSize: 16,
+    }
 });

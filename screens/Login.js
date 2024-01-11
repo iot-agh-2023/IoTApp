@@ -1,19 +1,41 @@
+import 'react-native-gesture-handler';
 import { StatusBar } from 'expo-status-bar';
 import { useEffect, useState } from 'react';
 import { PermissionsAndroid, Button, Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
 import axios from 'axios';
 import WifiManager from 'react-native-wifi-reborn';
 
-import { PrimaryButton } from '../components/PrimaryButton.js';
-
 import { SERVER_PATH } from '../config.js';
+
+import { PrimaryButton } from '../components/PrimaryButton.js';
 import { SecondaryButton } from '../components/SecondaryButton.js';
+import { globalStyles } from '../utils.js';
+
 
 export default function Login({ navigation }) {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
 
     const [ssid, setSSID] = useState('');
+    // const {
+    //     scanForPeripherals, 
+    //     requestPermissions, 
+    //     allDevices,
+    // } = useBLE();
+
+    // const scanForDevices = async () => {
+    //   const isPermissionsEnabled = await requestPermissions();
+    //   if(isPermissionsEnabled){
+    //     scanForPeripherals();
+    //   }
+    // }
+
+    // const openModel = () => {
+    //     scanForDevices();
+    //     console.log(allDevices.forEach(device => console.log(JSON.stringify(device, null, 2))));
+    // }
+
+
 
 
     useEffect(() => {
@@ -53,24 +75,31 @@ export default function Login({ navigation }) {
     }
 
 
-
     return (
         <View style={styles.container}>
-            <Text style={styles.h2}>Login</Text>
-            <TextInput 
-                style={styles.input}
-                placeholder='Email'
-                onChangeText={text => setEmail(text)}
-                defaultValue={email}
-            />
-            <TextInput 
-                style={styles.input}
-                textContentType='password'
-                secureTextEntry={true}
-                placeholder='Password'
-                onChangeText={text => setPassword(text)}
-                defaultValue={password} 
-            />
+          {/* <Text style={styles.h2}>
+            Connect to device
+          </Text>
+          {
+            allDevices && 
+            allDevices.map(device => <Device key={device.id} info={device} />)
+          }
+          <PrimaryButton text='Connect' onPress={openModel} /> */}
+          <Text style={globalStyles.h1}>Login</Text>
+          <TextInput 
+              style={styles.input}
+              placeholder='Email'
+              onChangeText={text => setEmail(text)}
+              defaultValue={email}
+          />
+          <TextInput 
+              style={styles.input}
+              textContentType='password'
+              secureTextEntry={true}
+              placeholder='Password'
+              onChangeText={text => setPassword(text)}
+              defaultValue={password} 
+          />
             <View style={styles.btnsContainer}>
                 <SecondaryButton text="Register "onPress={() => navigation.navigate('Register')}/>
                 <PrimaryButton text='Login' onPress={() => LoginUser(email, password, navigation)} />
@@ -103,7 +132,9 @@ const LoginUser = async (email, password, navigation) => {
         
         if (user) {
             alert("Login successful");
-            navigation.navigate('Main', { userID: user.userID });
+            // const userData = { userID: user.userID, userName: user.username };
+            // console.log(userData);
+            navigation.navigate('Main', { userID: user.userID, username: user.username, email: user.email });
         } else {
             alert("Wrong username or password");
         }
@@ -126,11 +157,6 @@ const styles = StyleSheet.create({
         justifyContent: 'space-between',
         width: '60%',
         marginTop: 20,
-    },
-    h2: {
-        fontSize: 24,
-        fontWeight: 'bold',
-        marginBottom: 20,
     },
     input: {
         width: '60%',
