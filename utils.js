@@ -23,5 +23,10 @@ export const globalStyles = StyleSheet.create({
         padding: 10,
         borderRadius: 10,
     },
-
+    specialText: {
+        fontSize: 20,
+        fontWeight: 'bold',
+        marginBottom: 20,
+        color: '#FCA311',
+    },
 });

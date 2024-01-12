@@ -2,23 +2,26 @@ import 'react-native-gesture-handler';
 
 import { StatusBar } from 'expo-status-bar';
 import { useEffect, useState } from 'react';
-import { PermissionsAndroid, Button, Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
+import { StyleSheet, Text, View } from 'react-native';
 
 import { PrimaryButton } from '../components/PrimaryButton.js';
-
 import { Device } from '../components/Device.js';
 
 import useBLE from '../useBLE.js';
-import { FlatList } from 'react-native-gesture-handler';
 
 export default function ConnectDevice({ navigation, route }) {
 
     const [userID, setUserID] = useState('');
 
+    const ssid = 'ONEPLUS_co_aphait'
+    const password = 'jajebie'
+
     const {
         scanForPeripherals, 
         requestPermissions, 
         allDevices,
+        connectToDevice,
+        connectedDevice,
     } = useBLE();
 
     const scanForDevices = async () => {
@@ -42,10 +45,12 @@ export default function ConnectDevice({ navigation, route }) {
             <Text style={styles.h2}>Connect new device</Text>
             {
             allDevices && 
-            allDevices.map(device => <Device key={device.id} info={device} />)
+            allDevices.map(device => <Device key={device.id} info={device} connectFunction={connectToDevice} />)
             }
             <PrimaryButton text='Search' onPress={openModel} />
-
+            {
+                connectedDevice && <Text>Connected to {connectedDevice.name}</Text>
+            }
             <StatusBar style="auto" />  
         </View>
     );

@@ -8,7 +8,7 @@ function useBLE() {
     const bleManager = useMemo(() => new BleManager(), []);
 
     const [allDevices, setAllDevices] = useState([]);
-    // const [connectedDevice, setConnectedDevice] = useState(null);
+    const [connectedDevice, setConnectedDevice] = useState(null);
 
     const requestAndroid31Permissions = async () => {
        const bluetoothScanPermission = await PermissionsAndroid.request(
@@ -75,6 +75,7 @@ function useBLE() {
         devices?.findIndex(device => device.id === nextDevice.id) > -1;
 
     const scanForPeripherals = async () => {
+        console.log("Scanning for peripherals");
         bleManager.startDeviceScan(null, null, (error, device) => {
             if(error){
                 console.log(error);
@@ -99,8 +100,10 @@ function useBLE() {
             setConnectedDevice(deviceConnection);
             await deviceConnection.discoverAllServicesAndCharacteristics();
             bleManager.stopDeviceScan();
+            console.log("Stop scanning");
+            console.log("Connected to device", deviceConnection.name);
         } catch(error){
-            console.log(error);
+            console.log("ERROR IN CONNECTION", error);
         }
     }
 
@@ -108,8 +111,8 @@ function useBLE() {
         scanForPeripherals,
         requestPermissions,
         allDevices,
-        // connectedDevice,
-        // connectToDevice,
+        connectToDevice,
+        connectedDevice,
     };
 }
 

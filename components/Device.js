@@ -4,7 +4,7 @@ import { SecondaryButton } from './SecondaryButton';
 import { PrimaryButton } from './PrimaryButton';
 
 
-export function Device({ info }) {
+export function Device({ info, connectFunction }) {
     const [deviceInfo, setDeviceInfo ] = useState({});
     useEffect(() => {
         setDeviceInfo(info);
@@ -16,7 +16,7 @@ export function Device({ info }) {
                 <Text style={styles.title}>{deviceInfo.name}</Text>
                 <Text style={styles.info}>ID: {deviceInfo.id}</Text>
             </View>
-            <PrimaryButton text='Connect' onPress={() => console.log('Connect to device')} mode='light'/>
+            <PrimaryButton text='Connect' onPress={connectFunction} mode='light'/>
         </View>
     );
 }

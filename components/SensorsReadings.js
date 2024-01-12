@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Text, StyleSheet, View, useWindowDimensions } from 'react-native';
-import { TabView, SceneMap } from 'react-native-tab-view';
+import { TabView, TabBar, SceneMap } from 'react-native-tab-view';
 import axios from 'axios';
 
 import { SERVER_PATH } from '../config';
@@ -14,26 +14,18 @@ export function SensorsReadings({ sensorsData }) {
 
     useEffect(() => {
         setSensors(sensorsData);
-        console.log(sensors);
-
+        tabs = {};
+        sensorsData.map((sensor) => {
+            tabs[sensor.sensorID] = () => <SensorTab sensorData={sensor} />
+        });
+        setScenes(tabs);
     }, [sensorsData]);
-
-    useEffect(() => {
-        if (sensors) {
-            tabs = {};
-            sensors.map((sensor) => {
-                tabs[sensor.sensorID] = <SensorTab sensorData={sensor} />
-            });
-            setScenes(tabs);
-            console.log(tabs);
-        }
-    }, [sensors]);
 
     return(
         <View style={styles.container}>
             <Text style={globalStyles.h2}>Measurements</Text>
             {
-                scenes ? 
+                scenes.length != 0 && sensors.length != 0 && 
                 <TabView
                     navigationState={{ 
                         index, 
@@ -42,8 +34,8 @@ export function SensorsReadings({ sensorsData }) {
                     renderScene={SceneMap(scenes)}
                     onIndexChange={setIndex}
                     initialLayout={{ width: '100%' }}
+                    renderTabBar={props => <TabBar {...props} style={styles.customTabBar}/> }
                 />
-                : <Text style={globalStyles.text}>No sensors found</Text>
             }
 
         </View>
@@ -57,4 +49,13 @@ const styles = StyleSheet.create({
         flex: 1,
         width: '100%',
       },
+    customTabBar: {
+        backgroundColor: '#14213d',
+        color: '#14213d',
+        borderTopEndRadius: 10,
+        borderTopStartRadius: 10,
+        elevation: 3,
+        borderBottomWidth: 1,
+        borderBottomColor: '#FCA311',
+    },
 });
