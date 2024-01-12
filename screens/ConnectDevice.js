@@ -3,6 +3,7 @@ import 'react-native-gesture-handler';
 import { StatusBar } from 'expo-status-bar';
 import { useEffect, useState } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
+import { BleManager } from "react-native-ble-plx";
 
 import { PrimaryButton } from '../components/PrimaryButton.js';
 import { Device } from '../components/Device.js';
@@ -11,24 +12,53 @@ import useBLE from '../useBLE.js';
 
 export default function ConnectDevice({ navigation, route }) {
 
-    const [userID, setUserID] = useState('');
-
-    const ssid = 'ONEPLUS_co_aphait'
-    const password = 'jajebie'
-
     const {
+        bleManager,
         scanForPeripherals, 
         requestPermissions, 
         allDevices,
-        connectToDevice,
-        connectedDevice,
+        // connectToDevice,
+        // connectedDevice,
     } = useBLE();
+    
+    const [userID, setUserID] = useState('');
+    const [device, setDevice] = useState(null);
+
+    const ssid = 'ONEPLUS_co_aphait'
+    const password = 'jajebie'
 
     const scanForDevices = async () => {
       const isPermissionsEnabled = await requestPermissions();
       if(isPermissionsEnabled){
         scanForPeripherals();
       }
+    }
+
+    const connectToDevice = async (device) => {
+        try{
+            console.log(device.id)
+            const deviceConnection = await device.connect()
+            .then(device => async () => {
+                device.discoverAllServicesAndCharacteristics()
+              })
+              .then(device => {
+                // Do work on device with services and characteristics
+                console.log(deviceConnection)
+                setDevice(deviceConnection);
+                bleManager.stopDeviceScan();
+                console.log("Stop scanning");
+                console.log("Connected to device", deviceConnection.name);
+              })
+              .catch(error => {
+                // Handle errors
+                console.log("ERROR 2, IN CONNECTION", error);
+
+              });
+
+        } catch(error){
+            console.log("ERROR IN CONNECTION", error);
+            setDevice(null)
+        }
     }
 
     const openModel = () => {
@@ -40,6 +70,12 @@ export default function ConnectDevice({ navigation, route }) {
         setUserID(route.params.userID);
     }, [route.params]);
 
+    useEffect(() => {
+        // setDevice(connectedDevice)
+        console.log("dupaaaa");
+        console.log(JSON.stringify(device, null, 2))
+    }), [device];
+
     return (
         <View style={styles.container}>
             <Text style={styles.h2}>Connect new device</Text>
@@ -49,7 +85,7 @@ export default function ConnectDevice({ navigation, route }) {
             }
             <PrimaryButton text='Search' onPress={openModel} />
             {
-                connectedDevice && <Text>Connected to {connectedDevice.name}</Text>
+                device != null && <Text>Connected to {device.id}</Text>
             }
             <StatusBar style="auto" />  
         </View>

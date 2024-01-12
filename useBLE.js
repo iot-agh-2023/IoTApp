@@ -83,7 +83,7 @@ function useBLE() {
             }
 
             // tu sprawdzamy czy to jest nasze urządzenie
-            if(device && device.name?.includes("OPPO")){
+            if(device && device.name?.includes("talk")){
                 setAllDevices(prevDevices => {
                     if(!isDuplicateDevice(prevDevices, device)){
                         return [...prevDevices, device];
@@ -96,7 +96,9 @@ function useBLE() {
 
     const connectToDevice = async (device) => {
         try{
+            console.log(device.id)
             const deviceConnection = await bleManager.connectToDevice(device.id);
+            console.log(deviceConnection)
             setConnectedDevice(deviceConnection);
             await deviceConnection.discoverAllServicesAndCharacteristics();
             bleManager.stopDeviceScan();
@@ -104,15 +106,17 @@ function useBLE() {
             console.log("Connected to device", deviceConnection.name);
         } catch(error){
             console.log("ERROR IN CONNECTION", error);
+            setConnectedDevice(null)
         }
     }
 
     return{
+        bleManager,
         scanForPeripherals,
         requestPermissions,
         allDevices,
-        connectToDevice,
-        connectedDevice,
+        // connectToDevice,
+        // connectedDevice,
     };
 }
 

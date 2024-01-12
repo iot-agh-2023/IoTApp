@@ -1,1 +1,1 @@
-export const SERVER_PATH = 'https://iot-server-db.glitch.me';
+export const SERVER_PATH = 'https://iot-server-db2.glitch.me';
