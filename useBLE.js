@@ -71,7 +71,7 @@ function useBLE() {
         devices?.findIndex(device => device.id === nextDevice.id) > -1;
 
     const scanForPeripherals = async () => {
-        console.log("Scanning for peripherals");
+        console.log("Scanning...");
         bleManager.startDeviceScan(null, {allowDuplicates: false}, (error, device) => {
             if(error){
                 console.log(error);
