@@ -50,9 +50,10 @@ export default function ConnectDevice({ navigation, route }) {
             }
             const hasID = list.some(item => item.id === device.id);
 
-            if (!hasID && device.name) {
+            if (!hasID && device.name?.includes('OPPO')) {
                 console.log('Found new device: ' + device.name);
                 list.push(device);
+                console.log(JSON.stringify(device, null, 2));
                 setDeviceList(prev => [...prev, device]);
             }
         });
@@ -74,6 +75,20 @@ export default function ConnectDevice({ navigation, route }) {
         manager.stopDeviceScan();
     }
 
+    // CONNECT-------------------------------------------------------------------------------------------------------------------
+
+    const connect = async (device) => {
+        await device.connect().then(() => console.log('Connected to ' + device.name), (error) => console.log(error));
+        // console.log('Connected to ' + device.name);
+        setIsConnected(true);
+        setDeviceID(device.id);
+
+        await device.discoverAllServicesAndCharacteristics();
+        const services = await device.services();
+
+        console.log('Services: ' + JSON.stringify(services, null, 2));
+    
+    }
 
     // PERMISSIONS----------------------------------------------------------------------------------------------------------------
 
@@ -136,9 +151,9 @@ export default function ConnectDevice({ navigation, route }) {
 
 
 
-    useEffect(() => {
-        console.log('Device list: ' + JSON.stringify(deviceList));
-    }, [deviceList]);
+    // useEffect(() => {
+    //     console.log('Device list: ' + JSON.stringify(deviceList));
+    // }, [deviceList]);
 
 
     return (
@@ -152,7 +167,7 @@ export default function ConnectDevice({ navigation, route }) {
                                 <Text style={styles.title}>{device.name}</Text>
                                 <Text style={styles.info}>ID: {device.id}</Text>
                             </View>
-                            <PrimaryButton text='Connect' onPress={() => console.log(JSON.stringify(device))} mode='light'/>
+                            <PrimaryButton text='Connect' onPress={() => connect(device)} mode='light'/>
                             {/* <PrimaryButton text='Disconnect' onPress={() => disconnectFromDevice()} mode='light'/> */}
                         </View>                           )
                 })
