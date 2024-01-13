@@ -4,7 +4,6 @@ import axios from 'axios';
 
 import { SERVER_PATH } from '../config';
 import { globalStyles } from '../utils';
-import { PrimaryButton } from './PrimaryButton';
 
 export function SensorTab({ sensorData }) {
     const [reading, setReading] = useState({});
@@ -12,7 +11,6 @@ export function SensorTab({ sensorData }) {
     useEffect(() => {
         if (sensorData){
             handleGetNewestSensorReading(sensorData.sensorID);
-            console.log(reading);
         }
     }, [sensorData]);
 
@@ -33,11 +31,9 @@ export function SensorTab({ sensorData }) {
     return(
         <View style={styles.container}>
             <Text style={globalStyles.h2}>Temperature</Text>
-            { reading != undefined && <Text style={globalStyles.specialText}>{reading.temperature}</Text> }
+            { reading != undefined && <Text style={globalStyles.specialText}>{reading.temperature} ℃</Text> }
             <Text style={globalStyles.h2}>Humidity</Text>
-            { reading != undefined && <Text style={globalStyles.specialText}>{reading.humidity}</Text> }
-
-            <PrimaryButton text="Previous" onPress={() => console.log('refresh')} />
+            { reading != undefined && <Text style={globalStyles.specialText}>{reading.humidity} %</Text> }
         </View>
     );
 }

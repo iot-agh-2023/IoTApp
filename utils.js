@@ -1,5 +1,16 @@
 import { StyleSheet } from 'react-native';
 
+export const COLORS = {
+    primary: '#14213D',
+    secondary: '#FCA311',
+    tertiary: '#E5E5E5',
+    text: '#000',
+    white: '#fff',
+    black: '#000',
+    gray: '#6A6A6A',
+    gray2: '#EFEFEF',
+}
+
 export const globalStyles = StyleSheet.create({
     h1: {
         marginBottom: 20,

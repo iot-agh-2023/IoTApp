@@ -13,12 +13,9 @@ import useBLE from '../useBLE.js';
 export default function ConnectDevice({ navigation, route }) {
 
     const {
-        bleManager,
         scanForPeripherals, 
         requestPermissions, 
         allDevices,
-        // connectToDevice,
-        // connectedDevice,
     } = useBLE();
     
     const [userID, setUserID] = useState('');
@@ -34,32 +31,32 @@ export default function ConnectDevice({ navigation, route }) {
       }
     }
 
-    const connectToDevice = async (device) => {
-        try{
-            console.log(device.id)
-            const deviceConnection = await device.connect()
-            .then(device => async () => {
-                device.discoverAllServicesAndCharacteristics()
-              })
-              .then(device => {
-                // Do work on device with services and characteristics
-                console.log(deviceConnection)
-                setDevice(deviceConnection);
-                bleManager.stopDeviceScan();
-                console.log("Stop scanning");
-                console.log("Connected to device", deviceConnection.name);
-              })
-              .catch(error => {
-                // Handle errors
-                console.log("ERROR 2, IN CONNECTION", error);
+    // const connectToDevice = async (device) => {
+    //     try{
+    //         console.log(device.id)
+    //         const deviceConnection = await device.connect()
+    //         .then(device => async () => {
+    //             device.discoverAllServicesAndCharacteristics()
+    //           })
+    //           .then(device => {
+    //             // Do work on device with services and characteristics
+    //             console.log(deviceConnection)
+    //             setDevice(deviceConnection);
+    //             bleManager.stopDeviceScan();
+    //             console.log("Stop scanning");
+    //             console.log("Connected to device", deviceConnection.name);
+    //           })
+    //           .catch(error => {
+    //             // Handle errors
+    //             console.log("ERROR 2, IN CONNECTION", error);
 
-              });
+    //           });
 
-        } catch(error){
-            console.log("ERROR IN CONNECTION", error);
-            setDevice(null)
-        }
-    }
+    //     } catch(error){
+    //         console.log("ERROR IN CONNECTION", error);
+    //         setDevice(null)
+    //     }
+    // }
 
     const openModel = () => {
         scanForDevices();
@@ -72,7 +69,6 @@ export default function ConnectDevice({ navigation, route }) {
 
     useEffect(() => {
         // setDevice(connectedDevice)
-        console.log("dupaaaa");
         console.log(JSON.stringify(device, null, 2))
     }), [device];
 
@@ -81,7 +77,7 @@ export default function ConnectDevice({ navigation, route }) {
             <Text style={styles.h2}>Connect new device</Text>
             {
             allDevices && 
-            allDevices.map(device => <Device key={device.id} info={device} connectFunction={connectToDevice} />)
+            allDevices.map(device => <Device key={device.id} info={device} connectFunction={() =>{}} />)
             }
             <PrimaryButton text='Search' onPress={openModel} />
             {

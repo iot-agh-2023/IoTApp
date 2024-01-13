@@ -46,10 +46,6 @@ function useBLE() {
     }
 
     const requestPermissions = async () => {
-        // BleManager.enableBluetooth().then(() => {
-        //     console.log('Bluetooth is turned on!');
-        //   }, () => requestPermissions());
-
         if(Platform.OS === "android"){
             if((ExpoDevice.platformApiLevel ?? -1) < 31){
                 const granted = await PermissionsAndroid.request(
@@ -76,14 +72,14 @@ function useBLE() {
 
     const scanForPeripherals = async () => {
         console.log("Scanning for peripherals");
-        bleManager.startDeviceScan(null, null, (error, device) => {
+        bleManager.startDeviceScan(null, {allowDuplicates: false}, (error, device) => {
             if(error){
                 console.log(error);
                 return;
             }
 
             // tu sprawdzamy czy to jest nasze urządzenie
-            if(device && device.name?.includes("talk")){
+            if(device && device.name?.includes("ESP")){
                 setAllDevices(prevDevices => {
                     if(!isDuplicateDevice(prevDevices, device)){
                         return [...prevDevices, device];
