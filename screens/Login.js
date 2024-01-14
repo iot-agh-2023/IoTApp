@@ -17,26 +17,7 @@ export default function Login({ navigation }) {
     const [password, setPassword] = useState('');
 
     const [ssid, setSSID] = useState('');
-    // const {
-    //     scanForPeripherals, 
-    //     requestPermissions, 
-    //     allDevices,
-    // } = useBLE();
-
-    // const scanForDevices = async () => {
-    //   const isPermissionsEnabled = await requestPermissions();
-    //   if(isPermissionsEnabled){
-    //     scanForPeripherals();
-    //   }
-    // }
-
-    // const openModel = () => {
-    //     scanForDevices();
-    //     console.log(allDevices.forEach(device => console.log(JSON.stringify(device, null, 2))));
-    // }
-
-
-
+ 
 
     useEffect(() => {
           permission().then(() =>{
@@ -77,14 +58,6 @@ export default function Login({ navigation }) {
 
     return (
         <View style={styles.container}>
-          {/* <Text style={styles.h2}>
-            Connect to device
-          </Text>
-          {
-            allDevices && 
-            allDevices.map(device => <Device key={device.id} info={device} />)
-          }
-          <PrimaryButton text='Connect' onPress={openModel} /> */}
           <Text style={globalStyles.h1}>Login</Text>
           <TextInput 
               style={styles.input}

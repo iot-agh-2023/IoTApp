@@ -8,7 +8,6 @@ import * as ExpoDevice from "expo-device";
 import base64 from 'react-native-base64';
 
 import { PrimaryButton } from '../components/PrimaryButton.js';
-import { Device } from '../components/Device.js';
 import { globalStyles } from '../utils.js';
 import { Divider } from '../components/Divider.js';
 
@@ -18,8 +17,6 @@ export default function ConnectDevice({ navigation, route }) {
     const [userID, setUserID] = useState('');
     const [ssid, setSSID] = useState('');
     const [password, setPassword] = useState('');
-    // const ssid = '511A KW&NN'
-    // const password = 'prosteHaslo'
 
     useEffect(() => {
         setUserID(route.params.userID);
@@ -28,17 +25,19 @@ export default function ConnectDevice({ navigation, route }) {
 
     const [isScanning, setIsScanning] = useState(false);
     const [deviceList, setDeviceList] = useState([]);
+    const [device, setDevice] = useState({});
     const [connectedDevice, setConnectedDevice] = useState({});
     const [isConnected, setIsConnected] = useState(false);
     
     const [deviceID, setDeviceID] = useState('');
     const [deviceName, setDeviceName] = useState('');
-    const [serviceID, setServiceID] = useState('');
+    const [serviceUUID, setServiceUUID] = useState('');
     const [ssidCharacteristicID, setSsidCharacteristicID] = useState('');
     const [passCharacteristicID, setPassCharacteristicID] = useState('');
 
 
     const [sendCommand, setSendCommand] = useState('');
+    const [decodedCommad, setDecodedCommand] = useState('');
 
 
     const manager = new BleManager();
@@ -47,17 +46,19 @@ export default function ConnectDevice({ navigation, route }) {
 
     const startScan = async () => {
         setIsScanning(true);
-        let list = deviceList.slice();
+        let list = [];
+        // let list = deviceList.slice();
 
         console.log('Scanning...');
         manager.startDeviceScan(null, null, (error, device) => {
-            if (error) { 
+            if (error) {
                 console.log(error);
                 return; 
             }
             const hasID = list.some(item => item.id === device.id);
 
-            if (!hasID && device.name?.includes('OPPO')) {
+            if (!hasID && device.name?.includes('POCO X4 GT')) {
+                setDevice(device);
                 console.log('Found new device: ' + device.name);
                 list.push(device);
                 console.log(JSON.stringify(device, null, 2));
@@ -78,97 +79,85 @@ export default function ConnectDevice({ navigation, route }) {
 
     const stopScan = async () => {
         setIsScanning(false);
-        // setDeviceList([]);
         console.log('Scan stopped');
         manager.stopDeviceScan();
     }
 
     // CONNECT-------------------------------------------------------------------------------------------------------------------
 
-    const connect = async (device) => {
-        try{
-            stopScan();
-            // await manager.connectToDevice(device.id);
-            await device.connect();
+
+    const connect = async () => {
+        device
+        .connect({requestMTU: 64})
+        .then(async connectedDevice => {
+            setDeviceID(device.id)
+            console.log('Connected to ' + connectedDevice.id);
             setIsConnected(true);
-            setDeviceID(device.id);
-        } catch (error) {
-            console.log(error);
-        }
-        // console.log('Connected to ' + device.name);
-
-        await device.discoverAllServicesAndCharacteristics();
-        const services = await device.services();
-
-        services.forEach(async (service) => {
-            // tu nasze uuid?
-            if (service.uuid.includes('ffe0')) {
-                const customService = service.uuid;
-                setServiceID(customService);
-
-                console.log('Custom service: ' + customService);
-                const characteristics = await device.characteristicsForService(customService);
-
-                characteristics.forEach( characteristic => {
-                    // tu tez nasze uuid ?? idk o co chodzi do końca id charakterystyki która przyjmuje ssid?
-                    if (characteristic.uuid.includes('ffe1')) {
-                        const customCharacteristic = characteristic.uuid;
-                        setSsidCharacteristicID(customCharacteristic);
-                        console.log('Custom characteristic: ' + customCharacteristic);
-                        setConnectedDevice(device);
-
-                        // setTimeout(() => {
-                        //     sendSSID();
-                        // }, 1000);
-                    }
-
-                    // idk czy o to chodzi? charakterystyka która przyjmuje hasło?
-                    if (characteristic.uuid.includes('ffe2')) {
-                        const customCharacteristic = characteristic.uuid;
-                        setPassCharacteristicID(customCharacteristic);
-                        console.log('Custom characteristic: ' + customCharacteristic);
-                        setConnectedDevice(device);
-
-                        // setTimeout(() => {
-                        //     sendPassword();
-                        // }, 1000);
-                    }
-                });
-
-            }
-    
-        });
+            setConnectedDevice(connectedDevice);
+            writeMessage(connectedDevice, '18902a9a-1f4a-44fe-936f-14c8eea41801', 'test')
+        })
+        .catch(error => {
+            console.log('Connection error 1:', error)
+        })
     }
 
 
     // SEND----------------------------------------------------------------------------------------------------------------
 
-    const sendSSID = async () => {
+    const writeMessage = async (device, uuidPattern, value) => {
+        device.discoverAllServicesAndCharacteristics()
+        .then(async (deviceWithServices) => {
+            return await deviceWithServices.services()
+        })
+        .then(async (services) => {
+            console.log("Services length:" + services.length)
+            const serviceUUID = matchService(services, uuidPattern)
+            if (serviceUUID == null) {
+                throw new Error("Service not found");
+            }
+            console.log("Service UUID: " + serviceUUID);
+            return await device.characteristicsForService(serviceUUID)
+        })
+        .then((characteristics) => {
+            device.writeCharacteristicWithoutResponseForService(characteristics[0].serviceUUID, characteristics[0].uuid, base64.encode(value))
+            console.log('Message sent');
+            return true;
+        })
+        .catch(error => {
+            console.log('Connection error 2: ', error)
+        })
+    }
+
+    const matchService = (services, uuidPattern) => {
+        var serviceUUID = null;
+        services.forEach(ser => {
+            if (ser.uuid.includes(uuidPattern)) {   
+                const customService = ser.uuid;
+                setServiceUUID(customService);
+                serviceUUID = customService;
+            }
+        })
+        return serviceUUID;
+    }
+
+
+    const sendSSID = async (device) => {
+        // manager.cancelTransaction('LISTEN')
+        console.log("sending ...")
         const encodedSSID = base64.encode(ssid);
-        await manager.writeCharacteristicWithResponseForDevice(deviceID, serviceID, ssidCharacteristicID, encodedSSID)
+        await device.writeCharacteristicWithoutResponseForService(deviceID, 'be3942ad-485c-4fce-9bce-110c2ec28897', '18902a9a-1f4a-44fe-936f-14c8eea41801', encodedSSID)
         console.log('SSID sent');
         // setTimeout(() => startMonitoring(), 200);
     }
 
+
     const sendPassword = async () => {
         const encodedPassword = base64.encode(password);
-        await manager.writeCharacteristicWithResponseForDevice(deviceID, serviceID, passCharacteristicID, encodedPassword)
+        await manager.writeCharacteristicWithoutResponseForDevice(deviceID, serviceID, passCharacteristicID, encodedPassword)
         console.log('Password sent');
         // setTimeout(() => startMonitoring(), 200);
     }
         
-
-    // nasłuchiwanie na zmiany w charakterystyce? do dekodowania wiadomości z płytki? 
-    // function startMonitoring() {
-    //     manager.monitorCharacteristicForDevice(deviceID, serviceID, characteristicID, (err, rxSerial) => {
-    //       if (err) {
-    //         console.log(err);
-    //       } else {
-    //         const decodedCommad = base64.decode(rxSerial.value);
-    //         setReceiveCommand(decodedCommad);
-    //       }
-    //     }, 'LISTEN');
-    //   }
 
     // PERMISSIONS----------------------------------------------------------------------------------------------------------------
 
@@ -230,12 +219,6 @@ export default function ConnectDevice({ navigation, route }) {
      };
 
 
-
-    // useEffect(() => {
-    //     console.log('Device list: ' + JSON.stringify(deviceList));
-    // }, [deviceList]);
-
-
     return (
         <View style={styles.container}>
             <Text style={styles.h2}>Connect new device</Text>
@@ -253,7 +236,7 @@ export default function ConnectDevice({ navigation, route }) {
                                 <Text style={styles.title}>{device.name}</Text>
                                 <Text style={styles.info}>ID: {device.id}</Text>
                             </View>
-                            <PrimaryButton text='Connect' onPress={() => connect(device)} mode='light'/>
+                            <PrimaryButton text='Connect' onPress={() => connect()} mode='light'/>
                             {/* <PrimaryButton text='Disconnect' onPress={() => disconnectFromDevice()} mode='light'/> */}
                         </View>                           )
                 })
