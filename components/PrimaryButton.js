@@ -21,6 +21,8 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         borderRadius: 10,
         backgroundColor: '#14213D',
+        marginTop: 5,
+        marginBottom: 5,
     },
     btnTitle: {
         color: '#FFFFFF',

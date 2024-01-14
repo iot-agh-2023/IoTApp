@@ -7,6 +7,7 @@ export function Divider() {
             borderBottomColor: 'black',
             borderBottomWidth: StyleSheet.hairlineWidth,
             marginBottom: 20,
+            marginTop: 20,
             width: '100%',}}
         />
     );
