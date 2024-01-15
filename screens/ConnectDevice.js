@@ -12,8 +12,8 @@ import { globalStyles } from '../utils.js';
 import { Divider } from '../components/Divider.js';
 
 const manager = new BleManager();
-const SERVICE_UUID = '18902a9a-1f4a-44fe-936f-14c8eea41801';
-const SSID_CHARACTERISTIC_UUID = 'be3942ad-485c-4fce-9bce-110c2ec28897';
+const SERVICE_UUID = 'be3942ad-485c-4fce-9bce-110c2ec28897';
+const SSID_CHARACTERISTIC_UUID = '18902a9a-1f4a-44fe-936f-14c8eea41801';
 
 export default function ConnectDevice({ navigation, route }) {
     const [userID, setUserID] = useState('');
@@ -61,7 +61,7 @@ export default function ConnectDevice({ navigation, route }) {
 
                 setIsScanning(false);
                 console.log('Scan stopped');
-                this.manager.stopDeviceScan();  
+                manager.stopDeviceScan();  
             }
         });
     }
@@ -79,7 +79,7 @@ export default function ConnectDevice({ navigation, route }) {
     const stopScan = () => {
         setIsScanning(false);
         console.log('Scan stopped');
-        this.manager.stopDeviceScan();
+        manager.stopDeviceScan();
     }
 
     // CONNECT-------------------------------------------------------------------------------------------------------------------
