@@ -79,7 +79,7 @@ function useBLE() {
             }
 
             // tu sprawdzamy czy to jest nasze urządzenie
-            if(device && device.name?.includes("ESP")){
+            if(device && device.name?.includes("POCO X4 GT")){
                 setAllDevices(prevDevices => {
                     if(!isDuplicateDevice(prevDevices, device)){
                         return [...prevDevices, device];
@@ -107,12 +107,11 @@ function useBLE() {
     }
 
     return{
-        bleManager,
         scanForPeripherals,
         requestPermissions,
         allDevices,
-        // connectToDevice,
-        // connectedDevice,
+        connectToDevice,
+        connectedDevice,
     };
 }
 
