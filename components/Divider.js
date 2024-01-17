@@ -6,8 +6,8 @@ export function Divider() {
         <View style={{
             borderBottomColor: 'black',
             borderBottomWidth: StyleSheet.hairlineWidth,
-            marginBottom: 20,
-            marginTop: 20,
+            marginBottom: 10,
+            marginTop: 10,
             width: '100%',}}
         />
     );

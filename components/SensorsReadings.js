@@ -4,7 +4,7 @@ import { TabView, TabBar, SceneMap } from 'react-native-tab-view';
 import axios from 'axios';
 
 import { SERVER_PATH } from '../config';
-import { globalStyles } from '../utils';
+import { COLORS, globalStyles } from '../utils';
 import { SensorTab } from './SensorTab';
 
 export function SensorsReadings({ sensorsData }) {
@@ -50,7 +50,7 @@ const styles = StyleSheet.create({
         width: '100%',
       },
     customTabBar: {
-        backgroundColor: '#14213d',
+        backgroundColor: COLORS.primary,
         color: '#14213d',
         borderTopEndRadius: 10,
         borderTopStartRadius: 10,

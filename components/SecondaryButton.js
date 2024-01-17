@@ -18,6 +18,8 @@ const styles = StyleSheet.create({
         borderRadius: 10,
         borderWidth: 1,
         borderColor: '#FCA311',
+        marginBottom: 5,
+        marginTop: 5,
     },
     btnTitle: {
         color: '#14213D',

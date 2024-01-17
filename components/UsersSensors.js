@@ -6,7 +6,7 @@ import { SERVER_PATH } from '../config';
 import { globalStyles } from '../utils';
 import { Sensor } from './Sensor';
 
-export function UserSensors({ sensorsData }) {
+export function UserSensors({ title, sensorsData}) {
     const [sensors, setSensors] = useState([]);
     
     useEffect(() => {
@@ -16,14 +16,14 @@ export function UserSensors({ sensorsData }) {
 
     return (
         <View style={styles.container}>
-            <Text style={globalStyles.h2}>Your devices</Text>
+            <Text style={globalStyles.h2}>{title}</Text>
             {
                 !!sensors.length != 0 ? sensors.map(sensor => {
                     return (
                         <Sensor key={sensor.sensorID} info={sensor} />
                     );
                 }) :
-                <Text>You have no sensors connected :c{'\n'}You can add new device in "Connect Device" section! </Text>
+                <Text>Add device!</Text>
             }
         </View>
     );

@@ -16,57 +16,57 @@ export default function Login({ navigation }) {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
 
-    const [ssid, setSSID] = useState('');
+    // const [ssid, setSSID] = useState('');
  
 
-    useEffect(() => {
-          permission().then(() =>{
-          WifiManager.getCurrentWifiSSID().then(ssid => {
-              console.log("Your current SSID: " + ssid);
-              setSSID(ssid);
-            },() => console.log('Cannot get current SSID'))
-            .catch(error => {
-              console.log(error);
-            }
-          );
-        }, () => console.log('Cannot get permission'))
-        .catch(error => {
-          console.log(error);
-        });
+    // useEffect(() => {
+    //       permission().then(() =>{
+    //       WifiManager.getCurrentWifiSSID().then(ssid => {
+    //           console.log("Your current SSID: " + ssid);
+    //           setSSID(ssid);
+    //         },() => console.log('Cannot get current SSID'))
+    //         .catch(error => {
+    //           console.log(error);
+    //         }
+    //       );
+    //     }, () => console.log('Cannot get permission'))
+    //     .catch(error => {
+    //       console.log(error);
+    //     });
       
-      }, []);
+    //   }, []);
 
 
-    const permission = async () => {
-      const granted = await PermissionsAndroid.request(
-        PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
-        {
-          title: "Location Permission is required for Wifi connections",
-          message:
-            "This app requires access to your location.",
-          buttonNegative: "Cancel",
-          buttonPositive: "OK"
-        }
-      );
-      if (granted === PermissionsAndroid.RESULTS.GRANTED) {
-        console.log("You can use the location");
-      } else {
-        console.log("Location permission denied");
-      }
-    }
+    // const permission = async () => {
+    //   const granted = await PermissionsAndroid.request(
+    //     PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
+    //     {
+    //       title: "Location Permission is required for Wifi connections",
+    //       message:
+    //         "This app requires access to your location.",
+    //       buttonNegative: "Cancel",
+    //       buttonPositive: "OK"
+    //     }
+    //   );
+    //   if (granted === PermissionsAndroid.RESULTS.GRANTED) {
+    //     console.log("You can use the location");
+    //   } else {
+    //     console.log("Location permission denied");
+    //   }
+    // }
 
 
     return (
         <View style={styles.container}>
-          <Text style={globalStyles.h1}>Login</Text>
+          <Text style={[globalStyles.h1, styles.h]}>Login</Text>
           <TextInput 
-              style={styles.input}
+              style={globalStyles.input}
               placeholder='Email'
               onChangeText={text => setEmail(text)}
               defaultValue={email}
           />
           <TextInput 
-              style={styles.input}
+              style={globalStyles.input}
               textContentType='password'
               secureTextEntry={true}
               placeholder='Password'
@@ -77,7 +77,7 @@ export default function Login({ navigation }) {
                 <SecondaryButton text="Register "onPress={() => navigation.navigate('Register')}/>
                 <PrimaryButton text='Login' onPress={() => LoginUser(email, password, navigation)} />
             </View>
-            <Text>SSID: {ssid}</Text>
+            {/* <Text>SSID: {ssid}</Text> */}
             <StatusBar style="auto" />  
         </View>
     );
@@ -131,13 +131,7 @@ const styles = StyleSheet.create({
         width: '60%',
         marginTop: 20,
     },
-    input: {
-        width: '60%',
-        height: 40,
-        borderWidth: 1,
-        borderColor: 'black',
-        marginBottom: 10,
-        padding: 10,
-        borderRadius: 10,
-    },
+    h: {
+        marginBottom: 20,
+    }
   });

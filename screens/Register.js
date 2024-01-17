@@ -1,6 +1,7 @@
 import { StatusBar } from 'expo-status-bar';
 import { useEffect, useState } from 'react';
 import { StyleSheet, Text, View, TextInput } from 'react-native';
+import { AntDesign } from '@expo/vector-icons';
 import axios from 'axios';
 
 import { PrimaryButton } from '../components/PrimaryButton.js';
@@ -15,6 +16,7 @@ export default function Register({ navigation}) {
 
   return (
       <View style={styles.container}>
+          <AntDesign style={styles.icon} name="back" size={24} color="black" onPress={() => navigation.goBack()} /> 
           <Text style={globalStyles.h1}>Create an account</Text>
           <TextInput 
               style={globalStyles.input}
@@ -100,4 +102,9 @@ const styles = StyleSheet.create({
       alignItems: 'center',
       justifyContent: 'center',
     },
+    icon: {
+      position: 'absolute',
+      top: 50,
+      left: 20,
+    }
   });

@@ -13,6 +13,12 @@ export function Sensor({ info }) {
                 <Text style={styles.title}>{deviceInfo.name}</Text>
                 <Text style={styles.info}>ID: {deviceInfo.sensorID}</Text>
             </View>
+            <View style={styles.deviceInfo}>
+            {
+                deviceInfo.role == 1 ? <Text style={styles.info}>Role: Admin</Text> 
+                : <Text style={styles.info}>Role: User</Text>
+            }
+            </View>
         </View>
     );
 }
@@ -28,7 +34,7 @@ const styles = StyleSheet.create({
         backgroundColor: '#14213D',
     },
     deviceInfo: {
-        width: '100%',
+        width: '50%',
         padding: 10,
         alignItems: 'flex-start',
         justifyContent: 'flex-start',

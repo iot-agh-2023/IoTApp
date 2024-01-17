@@ -10,6 +10,7 @@ import MainPanel from './screens/MainPanel.js';
 import Profile from './screens/Profile.js';
 import ConnectDevice from './screens/ConnectDevice.js';
 import History from './screens/History.js';
+import ConnectUser from './screens/ConnectUser.js';
 
 import Register from './screens/Register.js';
 import Login from './screens/Login.js';
@@ -25,6 +26,9 @@ function Main({ route }) {
       </Drawer.Screen>
       <Drawer.Screen name="Connect Device">
         {props => <ConnectDevice {...props} route={route} />}
+      </Drawer.Screen>
+      <Drawer.Screen name="Connect User">
+        {props => <ConnectUser {...props} route={route} />}
       </Drawer.Screen>
       <Drawer.Screen name="Daily Measurements">
         {props => <History {...props} route={route} />}

@@ -3,7 +3,7 @@ import { Text, Pressable, StyleSheet, View } from 'react-native';
 import axios from 'axios';
 
 import { SERVER_PATH } from '../config';
-import { globalStyles } from '../utils';
+import { COLORS, globalStyles } from '../utils';
 
 export function SensorTab({ sensorData }) {
     const [reading, setReading] = useState({});
@@ -13,6 +13,13 @@ export function SensorTab({ sensorData }) {
             handleGetNewestSensorReading(sensorData.sensorID);
         }
     }, [sensorData]);
+
+    useEffect(() => {
+        const interval = setInterval(async () => {
+            await handleGetNewestSensorReading(sensorData.sensorID);
+        }, 1000 * 60);
+        return () => clearInterval(interval);
+    }, []);
 
     const handleGetNewestSensorReading = async (id) => {
         try{
@@ -31,20 +38,28 @@ export function SensorTab({ sensorData }) {
     return(
         <View style={styles.container}>
             <Text style={globalStyles.h2}>Temperature</Text>
-            { reading != undefined && <Text style={globalStyles.specialText}>{reading.temperature} ℃</Text> }
+            { reading.temperature != null ? <Text style={globalStyles.specialText}>{reading.temperature} ℃</Text>
+            :   <Text style={globalStyles.specialText}>No data</Text> 
+            }
             <Text style={globalStyles.h2}>Humidity</Text>
-            { reading != undefined && <Text style={globalStyles.specialText}>{reading.humidity} %</Text> }
+            { reading.humidity != null ? <Text style={globalStyles.specialText}>{reading.humidity} %</Text>
+            :   <Text style={globalStyles.specialText}>No data</Text> 
+            }
         </View>
     );
 }
 
 const styles = StyleSheet.create({
     container: {
-        backgroundColor: '#fff',
-        marginBottom: 20,
+        backgroundColor: COLORS.white,
         flex: 1,
         padding: 20,
         justifyContent: 'flex-start',
         alignItems: 'center',
+        width: '100%',
+        borderColor: COLORS.primary,
+        borderWidth: 1,
+        borderBottomEndRadius: 10,
+        borderBottomStartRadius: 10,
       },
 });

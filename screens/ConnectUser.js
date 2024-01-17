@@ -3,24 +3,26 @@ import { useEffect, useState } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 
 import { PrimaryButton } from '../components/PrimaryButton.js';
-import { Divider } from '../components/Divider.js';
 import { globalStyles } from '../utils.js';
+import { TextInput } from 'react-native-gesture-handler';
 
-export default function Profile({ navigation, route }) {
+export default function ConnectUser({ navigation, route }) {
     const [user, setUser] = useState();
 
     useEffect(() => {
       setUser(route.params);
     }, [route.params])
 
+    const handelAdding = () => {
+        console.log('adding user');
+    }
+
     return (
         <View style={styles.container}>
-            <Text style={globalStyles.h2}>Username: <Text style={globalStyles.text}>{ user && user.username }</Text></Text>
-            <Text style={globalStyles.h2}>Email: <Text style={globalStyles.text}>{ user && user.email }</Text></Text>
-            <Text style={globalStyles.h2}>UserID: <Text style={globalStyles.text}>{ user && user.userID }</Text></Text>
-
-            <Divider />
-            <PrimaryButton text='Logout' onPress={() => navigation.navigate('Login')} />
+            <Text style={globalStyles.h2}>Add user to your accout</Text>
+            <TextInput style={globalStyles.input} placeholder='user email' />
+            <PrimaryButton text='Add user' onPress={() => handelAdding()} />
+            <Text style={globalStyles.text}>This user will be able to read measurements coming from your devices, but they won't be able to delete or modify them.</Text>
             <StatusBar style="auto" />
         </View>
     );

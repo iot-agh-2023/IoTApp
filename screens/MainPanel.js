@@ -8,10 +8,16 @@ import { Divider } from '../components/Divider.js';
 import { globalStyles } from '../utils.js';
 import { UserSensors } from '../components/UsersSensors.js';
 import { SensorsReadings } from '../components/SensorsReadings.js';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { ScrollView } from 'react-native-gesture-handler';
+
 
 export default function MainPanel({ navigation, route }) {
     const [user, setUser] = useState();
     const [sensors, setSensors] = useState([]);
+
+    // const [mySensors, setMySensors] = useState([]);
+    // const [observedSensors, setObservedSensors] = useState([]);
 
     useEffect(() => {
       setUser(route.params);
@@ -29,29 +35,37 @@ export default function MainPanel({ navigation, route }) {
 
           if (sensors){
               setSensors(sensors);
+              // sensors.map((sensor) => {
+              //   if (sensor.role == 2){
+              //     setObservedSensors(observedSensors => [...observedSensors, sensor]);
+              //   } else {
+              //     setMySensors(mySensors => [...mySensors, sensor]);
+              //   }
+              // })
           }
       } catch (err) {
           console.log(err);
       }
   }
-    // const [wifiList, setWifiList] = useState([]); // [ { ssid: 'ssid', bssid: 'bssid', capabilities: 'capabilities', level: 'level', frequency: 'frequency', timestamp: 'timestamp' }
-    // const [ssid, setSSID] = useState('');
 
     return (
-        <View style={styles.container}>
-          <Text style={globalStyles.h1}>Hi, { user && user.username}</Text>
-          <Divider />
-          {
-            user && <UserSensors sensorsData={sensors} />
-          }
-          <Divider />
-          {
-            user && <SensorsReadings sensorsData={sensors}/>
-          }
+        <SafeAreaView style={styles.container}>
+          {/* <ScrollView style={styles.scrollView}> */}
+            <Text style={globalStyles.h1}>Hi, { user && user.username}</Text>
+            <Divider />
+            {
+              user && <UserSensors title="All Devices" sensorsData={sensors}/>
+            }
+            <Divider />
+            {
+              user && <SensorsReadings sensorsData={sensors}/>
+            }
+            
 
-        {/* <Text>SSID: {ssid}</Text> */}
-        <StatusBar style="auto" />
-        </View>
+          {/* <Text>SSID: {ssid}</Text> */}
+          <StatusBar style="auto" />
+          {/* </ScrollView> */}
+        </SafeAreaView>
     );
 }
 
@@ -61,15 +75,8 @@ const styles = StyleSheet.create({
       backgroundColor: '#fff',
       alignItems: 'flex-start',
       justifyContent: 'flex-start',
-      padding: 20,
+      padding: 10,
+
     },
-    h1: {
-      width: '100%',
-      marginBottom: 20,
-      paddingBottom: 5,
-      fontSize: 25,
-      fontWeight: 'bold',
-      borderBottomColor: 'black',
-      borderBottomWidth: 1,
-    }
+
   });

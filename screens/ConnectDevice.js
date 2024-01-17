@@ -8,7 +8,7 @@ import * as ExpoDevice from "expo-device";
 import base64 from 'react-native-base64';
 
 import { PrimaryButton } from '../components/PrimaryButton.js';
-import { globalStyles } from '../utils.js';
+import { COLORS, globalStyles } from '../utils.js';
 import { Divider } from '../components/Divider.js';
 
 const manager = new BleManager();
@@ -24,34 +24,61 @@ export default function ConnectDevice({ navigation, route }) {
         setUserID(route.params.userID);
     }, [route.params]);
 
-    const deviceRef = useRef(null);
+    useEffect(() => {
+        confirmData();
+    }, [ssid, password]);
 
+    const confirmData = () => {
+        if (ssid.length != '' && password != '') {
+            setIsModelVisible(true);
+        }
+        else {
+            setIsModelVisible(false);
+        }
+    }
+
+   
+                // manager.state().then(state => {
+                //     if (state === 'PoweredOn') {
+                //         console.log('Bluetooth is on');
+                //         setIsModelVisible(true);
+                //     }
+                //     else {
+                //         console.log('Bluetooth is off');
+                //         setIsModelVisible(false);
+                //     }
+                // }) 
+                
+           
+
+
+    const [isModelVisible, setIsModelVisible] = useState(false);
     const [isScanning, setIsScanning] = useState(false);
     const [isConnected, setIsConnected] = useState(false);
     
     const [deviceList, setDeviceList] = useState([]);
     const [deviceID, setDeviceID] = useState('');
 
-    const [sendCommand, setSendCommand] = useState('test');
-    const [decodedCommad, setDecodedCommand] = useState('');
-
+    // HELPER FUNCTIONS----------------------------------------------------------------------------------------------------------------
 
 
     // SCAN----------------------------------------------------------------------------------------------------------------
 
     const startScan = async () => {
         setIsScanning(true);
-        let list = [];
+        let list = deviceList.slice();
 
         console.log('Scanning...');
         manager.startDeviceScan(null, null, (error, device) => {
             if (error) {
+                setIsScanning(false);
+                alert(error.message);
                 console.log(error);
                 return; 
             }
             const hasID = list.some(item => item.id === device.id);
 
-            if (!hasID && device.name?.includes('POCO X4 GT')) {
+            if (!hasID && device.name?.includes('OPPO')) {
                 // setDevice(device);
                 setDeviceID(device.id);
                 console.log('Found new device: ' + device.name);
@@ -92,10 +119,10 @@ export default function ConnectDevice({ navigation, route }) {
             setDeviceID(device.id)
             console.log('Connected to ' + connectedDevice.id);
             setIsConnected(true);
-            deviceRef.current = connectedDevice;
             writeMessage(connectedDevice, SERVICE_UUID, 'test')
         })
         .catch(error => {
+            alert("Make sure your device is turned on and in range of this device. Remember to turn on Bluetooth. Try again! ");
             console.log('Connection error 1:', error)
         })
     }
@@ -211,30 +238,8 @@ export default function ConnectDevice({ navigation, route }) {
 
     return (
         <View style={styles.container}>
-            <Text style={styles.h2}>Connect new device</Text>
-            {
-                isScanning ? <Text style={globalStyles.text}>Scanning...</Text> : <Text style={globalStyles.text}>Not scanning</Text>
-            }
-            {
-                isConnected ? <Text style={globalStyles.text}>Connected to {deviceID}</Text> : <Text style={globalStyles.text}>Not connected</Text>
-            }
-            {
-                !!deviceList.length != 0 && deviceList.map((device, index) => {
-                    return(
-                        <View key={index} style={styles.deviceContainer}>
-                            <View style={styles.deviceInfo}>
-                                <Text style={styles.title}>{device.name}</Text>
-                                <Text style={styles.info}>ID: {device.id}</Text>
-                            </View>
-                            <PrimaryButton text='Connect / Send' onPress={() => connect(device)} mode='light'/>
-                            {/* <PrimaryButton text='Disconnect' onPress={() => disconnectFromDevice()} mode='light'/> */}
-                        </View>                           )
-                })
-            }
-            <PrimaryButton text='Scan' onPress={scan} />
-            <PrimaryButton text='Stop scan' onPress={stopScan} />
-            <Divider />
-            <Text style={styles.h2}>Send data</Text>
+            <Text style={globalStyles.h1}>Connect new device</Text>
+            <Text style={globalStyles.h2}>Write SSID and Password to your Network</Text>
             <TextInput 
               style={globalStyles.input}
               placeholder='SSID'
@@ -248,6 +253,31 @@ export default function ConnectDevice({ navigation, route }) {
                 defaultValue={password} 
             />
 
+            <Divider />
+            { isModelVisible ? (<View style={styles.container}>
+                    {
+                        isScanning ? <Text style={globalStyles.text}>Scanning...</Text> : <Text style={globalStyles.text}>Not scanning</Text>
+                    }
+                    {
+                        isConnected ? <Text style={globalStyles.text}>Connected to {deviceID}</Text> : <Text style={globalStyles.text}>Not connected</Text>
+                    }
+                    {
+                        !!deviceList.length != 0 && deviceList.map((device, index) => {
+                            return(
+                                <View key={index} style={styles.deviceContainer}>
+                                    <View style={styles.deviceInfo}>
+                                        <Text style={styles.title}>{device.name}</Text>
+                                        <Text style={styles.info}>ID: {device.id}</Text>
+                                    </View>
+                                    <PrimaryButton text='Connect' onPress={() => connect(device)} mode='light'/>
+                                    {/* <PrimaryButton text='Disconnect' onPress={() => disconnectFromDevice()} mode='light'/> */}
+                                </View>                           )
+                        })
+                    }
+                    <PrimaryButton text='Scan' onPress={scan} />
+                    <PrimaryButton text='Stop scan' onPress={stopScan} />
+                </View>) : <Text>Fill in SSID and Password.</Text>
+            }
             <StatusBar style="auto" />  
         </View>
     );
@@ -259,8 +289,8 @@ export default function ConnectDevice({ navigation, route }) {
 const styles = StyleSheet.create({
     container: {
       flex: 1,
-      padding: 20,
-      backgroundColor: '#fff',
+      padding: 10,
+      backgroundColor: COLORS.white,
       alignItems: 'center',
       justifyContent: 'flex-start',
     },
@@ -279,7 +309,7 @@ const styles = StyleSheet.create({
         width: '60%',
         height: 40,
         borderWidth: 1,
-        borderColor: 'black',
+        borderColor: COLORS.black,
         marginBottom: 10,
         padding: 10,
         borderRadius: 10,
@@ -291,21 +321,21 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         marginBottom: 10,
         borderRadius: 10,
-        backgroundColor: '#14213D',
+        paddingRight: 10,
+        backgroundColor: COLORS.primary,
     },
     deviceInfo: {
         width: '50%',
-        padding: 10,
         alignItems: 'flex-start',
-        justifyContent: 'flex-start',
+        justifyContent: 'center',
     },
     title: {
-        color: '#FFFFFF',
+        color: COLORS.white,
         fontSize: 14,
         fontWeight: 'bold',
     },
     info: {
-        color: '#FFFFFF',
+        color: COLORS.white,
         fontSize: 12,
     }
   });
