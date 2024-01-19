@@ -12,8 +12,9 @@ import { COLORS, globalStyles } from '../utils.js';
 import { Divider } from '../components/Divider.js';
 
 const manager = new BleManager();
-const SERVICE_UUID = 'be3942ad-485c-4fce-9bce-110c2ec28897';
-const SSID_CHARACTERISTIC_UUID = '18902a9a-1f4a-44fe-936f-14c8eea41801';
+const SERVICE_UUID = 'be39';
+const SSID_CHARACTERISTIC_UUID = '1890';
+const PASSWORD_CHARACTERISTIC_UUID = '33f0';
 
 export default function ConnectDevice({ navigation, route }) {
     const [userID, setUserID] = useState('');
@@ -37,21 +38,6 @@ export default function ConnectDevice({ navigation, route }) {
         }
     }
 
-   
-                // manager.state().then(state => {
-                //     if (state === 'PoweredOn') {
-                //         console.log('Bluetooth is on');
-                //         setIsModelVisible(true);
-                //     }
-                //     else {
-                //         console.log('Bluetooth is off');
-                //         setIsModelVisible(false);
-                //     }
-                // }) 
-                
-           
-
-
     const [isModelVisible, setIsModelVisible] = useState(false);
     const [isScanning, setIsScanning] = useState(false);
     const [isConnected, setIsConnected] = useState(false);
@@ -59,8 +45,25 @@ export default function ConnectDevice({ navigation, route }) {
     const [deviceList, setDeviceList] = useState([]);
     const [deviceID, setDeviceID] = useState('');
 
-    // HELPER FUNCTIONS----------------------------------------------------------------------------------------------------------------
-
+    const onConnectHandler = async () => {
+        // if (isConnected){
+        //     try{
+        //         const response = await axios.post(
+        //             `${SERVER_PATH}/sensors`,
+        //             {
+        //                 sensorID: sensorID,
+        //                 userID: userID,
+        //             }
+        //         );
+        //     }catch{
+        //         console.log("Error while adding sensor to user account");
+        //     }
+        // }
+        if (isConnected){
+            alert("Device has been added to your account!")
+            setDeviceList([])
+        }
+    }
 
     // SCAN----------------------------------------------------------------------------------------------------------------
 
@@ -78,7 +81,7 @@ export default function ConnectDevice({ navigation, route }) {
             }
             const hasID = list.some(item => item.id === device.id);
 
-            if (!hasID && device.name?.includes('OPPO')) {
+            if (!hasID && device.name?.includes('GATT_DEVICE')) {
                 // setDevice(device);
                 setDeviceID(device.id);
                 console.log('Found new device: ' + device.name);
@@ -114,12 +117,14 @@ export default function ConnectDevice({ navigation, route }) {
 
     const connect = async (device) => {
         device
-        .connect({requestMTU: 64})
+        .connect()
         .then(async connectedDevice => {
             setDeviceID(device.id)
             console.log('Connected to ' + connectedDevice.id);
             setIsConnected(true);
-            writeMessage(connectedDevice, SERVICE_UUID, 'test')
+            setTimeout(() => writeMessage(connectedDevice, SERVICE_UUID, SSID_CHARACTERISTIC_UUID, ssid), 1000 * 2)
+            setTimeout(() => writeMessage(connectedDevice, SERVICE_UUID, PASSWORD_CHARACTERISTIC_UUID, password), 1000 * 2);
+            onConnectHandler();
         })
         .catch(error => {
             alert("Make sure your device is turned on and in range of this device. Remember to turn on Bluetooth. Try again! ");
@@ -130,13 +135,13 @@ export default function ConnectDevice({ navigation, route }) {
 
     // SEND----------------------------------------------------------------------------------------------------------------
 
-    const writeMessage = async (device, uuidPattern, value) => {
+    const writeMessage = async (device, _serviceUUID, _characteristicUUID,value) => {
         device.discoverAllServicesAndCharacteristics()
         .then(async (deviceWithServices) => {
             return await deviceWithServices.services()
         })
         .then(async (services) => {
-            const serviceUUID = matchService(services, uuidPattern)
+            const serviceUUID = matchService(services, _serviceUUID)
             if (serviceUUID == null) {
                 throw new Error("Service not found");
             }
@@ -144,7 +149,8 @@ export default function ConnectDevice({ navigation, route }) {
             return await device.characteristicsForService(serviceUUID)
         })
         .then((characteristics) => {
-            device.writeCharacteristicWithoutResponseForService(characteristics[0].serviceUUID, characteristics[0].uuid, base64.encode(value))
+
+            device.writeCharacteristicWithoutResponseForService(_serviceUUID, _characteristicUUID, base64.encode(value))
             console.log('Message sent');
             return true;
         })
@@ -155,7 +161,9 @@ export default function ConnectDevice({ navigation, route }) {
 
     const matchService = (services, uuidPattern) => {
         var serviceUUID = null;
+        console.log("szuakmy serviców")
         services.forEach(ser => {
+            console.log(JSON.stringify(ser, null, 2))
             if (ser.uuid.includes(uuidPattern)) {   
                 const customService = ser.uuid;
                 serviceUUID = customService;

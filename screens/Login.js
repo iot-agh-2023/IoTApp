@@ -74,7 +74,7 @@ export default function Login({ navigation }) {
               defaultValue={password} 
           />
             <View style={styles.btnsContainer}>
-                <SecondaryButton text="Register "onPress={() => navigation.navigate('Register')}/>
+                <SecondaryButton text="Register" onPress={() => navigation.navigate('Register')}/>
                 <PrimaryButton text='Login' onPress={() => LoginUser(email, password, navigation)} />
             </View>
             {/* <Text>SSID: {ssid}</Text> */}
