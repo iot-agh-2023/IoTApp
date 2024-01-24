@@ -1,12 +1,12 @@
 import { useEffect, useState } from 'react';
-import { Text, Pressable, StyleSheet, View, Dimensions } from 'react-native';
+import { Text, StyleSheet, View, Dimensions } from 'react-native';
 import axios from 'axios';
 import { LineChart } from 'react-native-chart-kit';
 
 import { SERVER_PATH } from '../config';
 import { COLORS, globalStyles } from '../utils';
 
-export function ReadingsPlots({ sensorID }) {
+export function ReadingsPlots({ sensorID, mode }) {
     const [_sensorID, setSensorID] = useState(''); 
     const [temperatureReadings, setTemperatureReadings] = useState([]);
     const [humidityReadings, setHumilidityReadings] = useState([]);
@@ -19,11 +19,9 @@ export function ReadingsPlots({ sensorID }) {
     }, [sensorID]);
 
     const handleGetReadings = async (id) => {
-        var url = `${SERVER_PATH}/readings/temperature/${id}/`;
-
         try{
             const t = await axios
-            .get(url)
+            .get(`${SERVER_PATH}/readings/temperature/${id}/${mode}`)
             .then(res => res.data, err => console.log(err));
 
             if (t){
@@ -35,7 +33,7 @@ export function ReadingsPlots({ sensorID }) {
 
         try{
             const h = await axios
-            .get(url)
+            .get(`${SERVER_PATH}/readings/humidity/${id}/${mode}`)
             .then(res => res.data, err => console.log(err));
 
             if (h){
@@ -52,7 +50,7 @@ export function ReadingsPlots({ sensorID }) {
             { !!temperatureReadings.length != 0 && 
                 <LineChart 
                     data={{
-                        labels: temperatureReadings.map(reading => reading.timestamp.slice(11, 16)),
+                        labels: temperatureReadings.map(reading => reading.time),
                         datasets: [{
                             data: temperatureReadings.map(reading => reading.reading),
                         }]

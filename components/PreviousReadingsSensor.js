@@ -7,7 +7,7 @@ import { Divider } from './Divider';
 import { ReadingsPlots } from './ReadingsPlots';
 
 
-export function PreviousReadingSensor({ sensorData }) {
+export function PreviousReadingSensor({ sensorData, mode }) {
     const [sensor, setSensor] = useState({}); 
 
     useEffect(() => {
@@ -20,7 +20,7 @@ export function PreviousReadingSensor({ sensorData }) {
     return(
         <View style={styles.container}>
             <View style={styles.header}><Text style={[globalStyles.h1, styles.title]}>{sensor.name}</Text></View>
-            {  sensor && <ReadingsPlots sensorID={sensor.sensorID} />}
+            {  sensor && <ReadingsPlots sensorID={sensor.sensorID} mode={mode}/>}
         </View>
     );
 }

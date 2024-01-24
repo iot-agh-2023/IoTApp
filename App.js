@@ -9,8 +9,11 @@ import { createDrawerNavigator } from '@react-navigation/drawer';
 import MainPanel from './screens/MainPanel.js';
 import Profile from './screens/Profile.js';
 import ConnectDevice from './screens/ConnectDevice.js';
-import History from './screens/History.js';
 import ConnectUser from './screens/ConnectUser.js';
+
+import DailyReadings from './screens/DailyReadings.js';
+import WeeklyReadings from './screens/WeeklyReadings.js';
+import MonthlyReadings from './screens/MonthlyReadings.js';
 
 import Register from './screens/Register.js';
 import Login from './screens/Login.js';
@@ -31,7 +34,13 @@ function Main({ route }) {
         {props => <ConnectUser {...props} route={route} />}
       </Drawer.Screen>
       <Drawer.Screen name="Daily Measurements">
-        {props => <History {...props} route={route} />}
+        {props => <DailyReadings {...props} route={route} />}
+      </Drawer.Screen>
+      <Drawer.Screen name="Weekly Measurements">
+        {props => <WeeklyReadings {...props} route={route} />}
+      </Drawer.Screen>
+      <Drawer.Screen name="Monthly Measurements">
+        {props => <MonthlyReadings {...props} route={route} />}
       </Drawer.Screen>
       <Drawer.Screen name="Profile">
         {props => <Profile {...props} route={route} />}

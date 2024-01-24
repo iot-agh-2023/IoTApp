@@ -9,7 +9,7 @@ import { PreviousReadingSensor } from '../components/PreviousReadingsSensor.js';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { ScrollView } from 'react-native-gesture-handler';
 
-export default function History({ navigation, route }) {
+export default function MonthlyReadings({ navigation, route }) {
     const [sensors, setSensors] = useState([]);
 
     useEffect(() => {
@@ -38,7 +38,7 @@ export default function History({ navigation, route }) {
             {
                 !!sensors.length != 0 ? sensors.map((sensor, index) => {
                     return(
-                        <PreviousReadingSensor key={index} sensorData={sensor} />
+                        <PreviousReadingSensor key={index} sensorData={sensor} mode='monthly'/>
                     )})
                 : <Text style={globalStyles.h2}>No sensors found</Text>
             }
