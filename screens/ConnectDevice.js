@@ -44,24 +44,26 @@ export default function ConnectDevice({ navigation, route }) {
     
     const [deviceList, setDeviceList] = useState([]);
     const [deviceID, setDeviceID] = useState('');
+    const [deviceName, setDeviceName] = useState('');
 
     const onConnectHandler = async () => {
-        // if (isConnected){
-        //     try{
-        //         const response = await axios.post(
-        //             `${SERVER_PATH}/sensors`,
-        //             {
-        //                 sensorID: sensorID,
-        //                 userID: userID,
-        //             }
-        //         );
-        //     }catch{
-        //         console.log("Error while adding sensor to user account");
-        //     }
-        // }
         if (isConnected){
-            alert("Device has been added to your account!")
-            setDeviceList([])
+            try{
+                const response = await axios.post(
+                    `${SERVER_PATH}/sensors`,
+                    {
+                        name: deviceName, 
+                        sensorID: deviceID,
+                        userID: userID,
+                    }
+                );
+                alert("Device has been added to your account!")
+                setDeviceList([])
+            }catch{
+                console.log("Error while adding sensor to user account");
+            }
+        } else {
+            alert("Device is not connected and cannot be added to your account");
         }
     }
 
@@ -120,6 +122,7 @@ export default function ConnectDevice({ navigation, route }) {
         .connect()
         .then(async connectedDevice => {
             setDeviceID(device.id)
+            setDeviceName(device.name)
             console.log('Connected to ' + connectedDevice.id);
             setIsConnected(true);
             setTimeout(() => writeMessage(connectedDevice, SERVICE_UUID, SSID_CHARACTERISTIC_UUID, ssid), 1000 * 2)
@@ -171,17 +174,6 @@ export default function ConnectDevice({ navigation, route }) {
         })
         return serviceUUID;
     }
-
-
-    // const sendSSID = async (device) => {
-    //     // manager.cancelTransaction('LISTEN')
-    //     console.log("sending ...")
-    //     const encodedSSID = base64.encode(ssid);
-    //     await device.writeCharacteristicWithoutResponseForService(deviceID, 'be3942ad-485c-4fce-9bce-110c2ec28897', '18902a9a-1f4a-44fe-936f-14c8eea41801', encodedSSID)
-    //     console.log('SSID sent');
-    //     // setTimeout(() => startMonitoring(), 200);
-    // }
-
         
 
     // PERMISSIONS----------------------------------------------------------------------------------------------------------------
