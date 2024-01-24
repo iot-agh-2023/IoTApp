@@ -10,6 +10,7 @@ import MainPanel from './screens/MainPanel.js';
 import Profile from './screens/Profile.js';
 import ConnectDevice from './screens/ConnectDevice.js';
 import ConnectUser from './screens/ConnectUser.js';
+import YourDevices from './screens/YourDevices.js';
 
 import DailyReadings from './screens/DailyReadings.js';
 import WeeklyReadings from './screens/WeeklyReadings.js';
@@ -26,6 +27,9 @@ function Main({ route }) {
     <Drawer.Navigator initialRouteName='MainPanel'>
       <Drawer.Screen name="Main Panel">
         {props => <MainPanel {...props} route={route} />}
+      </Drawer.Screen>
+      <Drawer.Screen name="Your Devices">
+        {props => <YourDevices {...props} route={route} />}
       </Drawer.Screen>
       <Drawer.Screen name="Connect Device">
         {props => <ConnectDevice {...props} route={route} />}

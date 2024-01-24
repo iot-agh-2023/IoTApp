@@ -6,21 +6,23 @@ import { SERVER_PATH } from '../config';
 import { globalStyles } from '../utils';
 import { Sensor } from './Sensor';
 
-export function UserSensors({ title, sensorsData}) {
+export function UserSensors({userID, title, sensorsData}) {
     const [sensors, setSensors] = useState([]);
+    const [user, setUserID] = useState('');
     
     useEffect(() => {
         setSensors(sensorsData);
-    }, [sensorsData]);
+        setUserID(userID);
+    }, [sensorsData, userID]);
 
 
     return (
         <View style={styles.container}>
             <Text style={globalStyles.h2}>{title}</Text>
             {
-                !!sensors.length != 0 ? sensors.map(sensor => {
+                (!!sensors.length != 0 && user !== '') ? sensors.map(sensor => {
                     return (
-                        <Sensor key={sensor.sensorID} info={sensor} />
+                        <Sensor userID={userID} key={sensor.sensorID} info={sensor} />
                     );
                 }) :
                 <Text>Add device!</Text>

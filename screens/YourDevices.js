@@ -6,13 +6,13 @@ import axios from 'axios';
 import { SERVER_PATH } from '../config.js';
 import { Divider } from '../components/Divider.js';
 import { globalStyles } from '../utils.js';
-import { UserSensors } from '../components/UsersSensors.js';
-import { SensorsReadings } from '../components/SensorsReadings.js';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-export default function MainPanel({ navigation, route }) {
+
+export default function YourDevices({ navigation, route }) {
     const [user, setUser] = useState();
     const [sensors, setSensors] = useState([]);
+    const [mySensors, setMySensors] = useState([]);
 
     useEffect(() => {
       setUser(route.params);
@@ -21,13 +21,6 @@ export default function MainPanel({ navigation, route }) {
     };
     }, [route.params])
 
-    
-    useEffect(() => {
-      const interval = setInterval(async () => {
-          await handleGetUserSensors(route.params.userID);
-      }, 1000 * 10);
-      return () => clearInterval(interval);
-  }, []);
 
     const handleGetUserSensors = async (id) => {
       try{
@@ -37,6 +30,14 @@ export default function MainPanel({ navigation, route }) {
 
           if (sensors){
               setSensors(sensors);
+              let s = [];
+              sensors.map((sensor) => {
+                if (sensor.role == 1){
+                    s.push(sensor);
+                }
+              })
+            // console.log(s);
+            setMySensors(s);
           }
       } catch (err) {
           console.log(err);
@@ -45,16 +46,16 @@ export default function MainPanel({ navigation, route }) {
 
     return (
         <SafeAreaView style={styles.container}>
-            <Text style={globalStyles.h1}>Hi, { user && user.username}</Text>
-            <Divider />
+            <Text style={globalStyles.h2}>You can edit your devices here</Text>
             {
-              user && <UserSensors navigation={navigation} userID={user.userID} title="All Devices" sensorsData={sensors}/>
+              (user && mySensors !== undefined) ? mySensors.map((sensor) => {
+                return (
+                  <View key={sensor.sensorID}>
+                    <Text style={globalStyles.h3}>{sensor.name}</Text>
+                  </View>
+                )
+            }) : <Text style={globalStyles.h3}>No devices found</Text>
             }
-            <Divider />
-            {
-              user && <SensorsReadings sensorsData={sensors}/>
-            }
-            
           <StatusBar style="auto" />
         </SafeAreaView>
     );

@@ -17,9 +17,9 @@ export default function ConnectUser({ navigation, route }) {
     }, [route.params])
 
     const handelAdding = async () => {
-      console.log('Adding user');
-      console.log(user.userID);
-      console.log(userEmail);
+      // console.log('Adding user');
+      // console.log(user.userID);
+      // console.log(userEmail);
       try{
         const response = await axios.post(
           `${SERVER_PATH}/linkages/${user.userID}`,
@@ -30,10 +30,13 @@ export default function ConnectUser({ navigation, route }) {
         if(response.status === 200){
           alert('Devices added to user '+userEmail);
         }
+        else{
+          alert('User not found');
+        }
 
 
       }catch(err){
-        console.log(err);
+        alert('User not found');
       }
     }
 
